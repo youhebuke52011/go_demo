@@ -1,0 +1,42 @@
+{
+  "min_score": 0,
+  "from": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "bool": {
+            "should": [
+              {
+                "multi_match": {
+                  "slop": 0,
+                  "query": "美团",
+                  "operator": "and",
+                  "fields": [
+                    "name",
+                    "name.raw"
+                  ],
+                  "type": "phrase"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "filter": [
+        {
+          "term": {
+            "hasAdv": 1
+          }
+        }
+      ]
+    }
+  },
+  "size": 1000,
+  "_source": [
+    "id",
+    "name",
+    "name.raw",
+    "name.str"
+  ]
+}
