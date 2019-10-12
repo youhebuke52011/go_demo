@@ -1,6 +1,9 @@
 package main
 
-import "go_demo/common"
+import (
+	"fmt"
+	"go_demo/common"
+)
 
 /**
 把一个数组n分为[l:mid]、[mid:n] ,递归分,直到数组长度==1,然后left、right数组进行merge
@@ -8,6 +11,8 @@ merge的过程是两个数组进行比较，借助个长度为len(left)+len(righ
 然后递归逆序回去就把各层级的两数组合成一个有序的数组
 */
 // MergeSort 归并排序
+var count int
+
 func MergeSort(a []int) []int {
 	length := len(a)
 	if length < 2 {
@@ -43,6 +48,7 @@ func merge(left, right []int) []int {
 		} else {
 			result[k] = right[j]
 			j++
+			count += len(left) - 1 - i + 1
 		}
 		k++
 	}
@@ -63,8 +69,12 @@ func merge(left, right []int) []int {
 
 func main() {
 	a := common.GenerateSlice(10000000)
+	//a := []int{3, 8, 7, 2}
+	//a := []int{9, 8, 7, 6}
+	count = 0
 	//printSlice(a, "before:")
 	//result := MergeSort(a)
 	MergeSort(a)
+	fmt.Printf("逆序对数：%d\n",count)
 	//printSlice(result, "after:")
 }
