@@ -42,20 +42,45 @@ func QuickSort(a []int) []int {
 	return a
 }
 
-func QuickSort2(a []int) []int {
-	length := len(a)
-	if length < 2 {
+// QuickSort3Way 三路快排
+func QuickSort3Way(a []int) []int {
+	n := len(a)
+	if n < 2 {
 		return a
 	}
-	// a[l...lt) < val , a[lt...i) == val , a[rt...r] > val
+
+	// a[0...zero] < val , a[zero+1...i) == val , a[two...n-1] > val
+	zero := -1
+	i := 0
+	two := n
+
+	// 随机选个
+	val := a[rand.Int() % n]
+
+	for i < two {
+		if a[i] < val {
+			a[i], a[zero+1] = a[zero+1], a[i]
+			zero++
+			i++
+		} else if a[i] > val {
+			a[i], a[two-1] = a[two-1], a[i]
+			two--
+		} else {
+			i++
+		}
+	}
+
+	QuickSort3Way(a[:zero+1])
+	QuickSort3Way(a[two:])
 
 	return a
 }
 
 func main() {
-	a := common.GenerateSlice(10000000)
-	//a := []int{7,4,8,1,2,9,3,5,6}
-	//printSlice(a, "before:")
-	QuickSort(a)
-	//printSlice(a, "after:")
+	//a := common.GenerateSlice(10000000)
+	a := []int{8,8,3,3,2,1,2,3,6,1,1}
+	common.PrintSlice(a, "before:")
+	//QuickSort(a)
+	QuickSort3Way(a)
+	common.PrintSlice(a, "after:")
 }
