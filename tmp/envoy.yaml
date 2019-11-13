@@ -1,0 +1,460 @@
+apiVersion: v1
+data:
+  envoy.yaml: "static_resources:\n  listeners:\n  - address:\n      socket_address:\n
+    \       address: 0.0.0.0\n        port_value: 80\n    name: admanage-preview-grpc\n
+    \   filter_chains:\n    - filters:\n      - name: envoy.http_connection_manager\n
+    \       config:\n          generate_request_id: true\n          tracing:\n            operation_name:
+    ingress\n          idle_timeout: 360s\n          access_log:\n          - name:
+    envoy.file_access_log\n            config:\n              path: \"/dev/stdout\"\n
+    \         codec_type: auto\n          stat_prefix: admanage\n          route_config:\n
+    \           name: local_route\n            virtual_hosts:\n            - name:
+    local_service\n              domains:\n              - \"*\"\n              routes:\n
+    \             - match:\n                  prefix: \"/\"\n                route:\n
+    \                 cluster: local_service_grpc\n                  timeout: 360s\n
+    \               decorator:\n                  operation: admanage\n          http_filters:\n
+    \         - name: envoy.router\n            config: {}\n  - address:   # rest->grpc转码\n
+    \     socket_address:\n        address: 0.0.0.0\n        port_value: 50052\n    name:
+    admanage-preview-http\n    filter_chains:\n    - filters:\n      - name: envoy.http_connection_manager\n
+    \       config:\n          generate_request_id: true\n          access_log:\n
+    \         - name: envoy.file_access_log\n            config:\n              path:
+    \"/dev/stdout\"\n          codec_type: auto\n          stat_prefix: admanage\n
+    \         route_config:\n            name: local_route\n            virtual_hosts:\n
+    \           - name: local_service\n              domains:\n              - \"*\"\n
+    \             routes:\n              - match:\n                  prefix: \"/\"\n
+    \               route:\n                  cluster: local_service_grpc\n                  timeout:
+    360s\n          http_filters:\n          - name: envoy.grpc_json_transcoder\n
+    \           config:\n              proto_descriptor: /opt/protos/proto.pb\n              print_options:\n
+    \               always_print_primitive_fields: true\n                preserve_proto_field_names:
+    true\n              services:\n              - admanage.AdManage\n          -
+    name: envoy.router\n            config: {}\n  - address: # egress\n      socket_address:\n
+    \       address: 0.0.0.0\n        port_value: 50055\n    filter_chains:\n    -
+    filters:\n      - name: envoy.http_connection_manager\n        config:\n          tracing:\n
+    \           operation_name: egress\n          access_log:\n          - name: envoy.file_access_log\n
+    \           config:\n              path: \"/dev/stdout\"\n          codec_type:
+    http2\n          stat_prefix: \"admanage-preview\"\n          route_config:\n
+    \           name: local_route\n            virtual_hosts:\n            - name:
+    local_service\n              domains:\n              - \"*\"\n              routes:\n
+    \             - match:\n                  prefix: \"/ssp.AdService\"\n                route:\n
+    \                 cluster: sspv2-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/adslot.SlotService\"\n
+    \               route:\n                  cluster: adslotservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/adpool.AdPool\"\n                route:\n
+    \                 cluster: adpool-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/costratio.CostRatioService\"\n
+    \               route:\n                  cluster: costratio-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/targeting.TargetingSpecService\"\n
+    \               route:\n                  cluster: targetingspec-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/unitagserver.Unitag\"\n
+    \               route:\n                  cluster: unitagserver-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/censor.Censor\"\n                route:\n
+    \                 cluster: censor-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/mygolangproject.Greeter\"\n
+    \               route:\n                  cluster: mygolangproject-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/resourcemgr.AdxConnector\"\n
+    \               route:\n                  cluster: adxconnector-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/agentservice.AgentService\"\n
+    \               route:\n                  cluster: agentservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/pricinggrpc.Pricing\"\n
+    \               route:\n                  cluster: pricinggrpc-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/adxtraffic.AdxTraffic\"\n
+    \               route:\n                  cluster: adxtraffic-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/os.OSBudgetAgent\"\n                route:\n
+    \                 cluster: osbudgetagent-egress\n                  timeout: 360s\n
+    \                 #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/dspuser.DspUser\"\n                route:\n
+    \                 cluster: dspuser-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/dspbanker.DSPBankerService\"\n
+    \               route:\n                  cluster: dspbanker-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/lottery.Greeter\"\n                route:\n
+    \                 cluster: lottery-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/banker.BankerService\"\n
+    \               route:\n                  cluster: banker-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/contentpkg.ContentPkg\"\n
+    \               route:\n                  cluster: contentpkg-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/dataoverview.DataOverview\"\n
+    \               route:\n                  cluster: dataoverview-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/campaign.Campaign\"\n
+    \               route:\n                  cluster: campaign-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/costservice.CostService\"\n
+    \               route:\n                  cluster: costservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/permissionlist.PermissionList\"\n
+    \               route:\n                  cluster: permissionlist-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/customerserver.CustomerManage\"\n
+    \               route:\n                  cluster: customerserver-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/dmpfileuploader.DmpFileupLoader\"\n
+    \               route:\n                  cluster: dmpfileuploader-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/adxuihelper.AdxUiHelper\"\n
+    \               route:\n                  cluster: adxuihelper-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/cookieproxy.CookieProxy\"\n
+    \               route:\n                  cluster: cookieproxy-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/pretargeting.Ad\"\n                route:\n
+    \                 cluster: pretargeting-egress\n                  timeout: 360s\n
+    \                 #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/agentcensor.AgentCensor\"\n
+    \               route:\n                  cluster: agentcensor-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/roleservice.RoleService\"\n
+    \               route:\n                  cluster: roleservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/targeting.TargetingService\"\n
+    \               route:\n                  cluster: targetingservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/userservice.UserService\"\n
+    \               route:\n                  cluster: userservice-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/ztcaptcha.ZTCaptcha\"\n
+    \               route:\n                  cluster: ztcaptcha-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/authority.Authority\"\n
+    \               route:\n                  cluster: authority-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/ztmgr.ZtMgr\"\n                route:\n
+    \                 cluster: ztmgr-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/pretargeting.AdPreTargeting\"\n
+    \               route:\n                  cluster: pretargeting-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/revenue.RevenueService\"\n
+    \               route:\n                  cluster: revenue-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/statemanage.StateManage\"\n
+    \               route:\n                  cluster: statemanage-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/material.Material\"\n
+    \               route:\n                  cluster: material-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/resourcemgr.PackageMgr\"\n
+    \               route:\n                  cluster: packagemgr-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/unitagperms.UnitagPermsService\"\n
+    \               route:\n                  cluster: unitagperms-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/overseabasic.OSAdPool\"\n
+    \               route:\n                  cluster: osadpool-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/dmpaudienceuploader.DmpAudienceUploader\"\n
+    \               route:\n                  cluster: dmpaudienceuploader-egress\n
+    \                 timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/overseabasic.OSRouter\"\n
+    \               route:\n                  cluster: router-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/virtualadx.VirtualAdxServer\"\n
+    \               route:\n                  cluster: virtualadx-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/weibosearch.WeiboSearch\"\n
+    \               route:\n                  cluster: weibosearch-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/openstat.OpenStat\"\n
+    \               route:\n                  cluster: openstat-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/spidertargeting.SpiderTargeting\"\n
+    \               route:\n                  cluster: spidertargeting-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/adtrack.AdTrack\"\n                route:\n
+    \                 cluster: adtrack-egress\n                  timeout: 360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n
+    \                 retry_policy:   \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/fundmanage.FundManage\"\n
+    \               route:\n                  cluster: fundmanage-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/resourcemgr.ResourceMgr\"\n
+    \               route:\n                  cluster: resourcemgr-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/unitagmgr.UnitagMgrService\"\n
+    \               route:\n                  cluster: unitagmgr-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/os.OSBudgetServer\"\n
+    \               route:\n                  cluster: osbudgetserver-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/hiveexport.HiveExport\"\n
+    \               route:\n                  cluster: hiveexport-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/resourcemgr.Binder\"\n
+    \               route:\n                  cluster: resourcemgr-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n              - match:\n                  prefix: \"/admanage.AdManage\"\n
+    \               route:\n                  cluster: admanage-egress\n                  timeout:
+    360s\n                  #https://github.com/envoyproxy/envoy/issues/1979\n                  retry_policy:
+    \  \n                    retry_on:  \"5xx\"\n                    num_retries:
+    2\n          http_filters: \n          - name: envoy.router\n            config:
+    {}\n  clusters:\n  - name: weibosearch-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.122.247\n        port_value: 80\n  - name: campaign-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.181.191\n        port_value:
+    80\n  - name: revenue-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: revenue-preview\n        port_value: 80\n  - name: censor-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.98.157\n        port_value:
+    80\n  - name: ztcaptcha-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: ztcaptcha-preview\n        port_value: 80\n  - name: authority-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.234.240\n        port_value:
+    80\n  - name: adtrack-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: adtrack-preview\n        port_value: 80\n  - name: dmpfileuploader-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: dmpfileuploader-preview\n
+    \       port_value: 80\n  - name: userservice-egress\n    connect_timeout: 30s\n
+    \   http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.173.169\n        port_value: 80\n
+    \ - name: agentservice-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.153.91\n        port_value: 80\n  - name: ztmgr-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: ztmgr-preview\n
+    \       port_value: 80\n  - name: targetingservice-egress\n    connect_timeout:
+    30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.90.42\n        port_value: 80\n
+    \ - name: unitagmgr-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: unitagmgr-preview\n        port_value: 80\n  - name: adxconnector-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.145.82\n        port_value:
+    80\n  - name: lottery-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.109.191\n        port_value: 80\n  - name: adpool-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.215.167\n        port_value:
+    80\n  - name: statemanage-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.104.52\n        port_value: 80\n  - name: hiveexport-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: hiveexport-preview\n
+    \       port_value: 80\n  - name: adxtraffic-egress\n    connect_timeout: 30s\n
+    \   http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.139.17\n        port_value: 80\n
+    \ - name: packagemgr-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.127.141\n        port_value: 80\n  - name: permissionlist-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.86.177\n        port_value:
+    80\n  - name: adslotservice-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.129.96\n        port_value: 80\n  - name: dataoverview-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.162.91\n        port_value:
+    80\n  - name: material-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.91.143\n        port_value: 80\n  - name: osbudgetagent-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: osbudgetagent-preview\n
+    \       port_value: 80\n  - name: adxuihelper-egress\n    connect_timeout: 30s\n
+    \   http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.216.149\n        port_value: 80\n
+    \ - name: dspbanker-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.129.120\n        port_value: 80\n  - name: virtualadx-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.249.31\n        port_value:
+    80\n  - name: targetingspec-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.213.251\n        port_value: 80\n  - name: cookieproxy-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.32.59\n        port_value:
+    80\n  - name: contentpkg-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.196.17\n        port_value: 80\n  - name: spidertargeting-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: spidertargeting-preview\n
+    \       port_value: 80\n  - name: osbudgetserver-egress\n    connect_timeout:
+    30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.87.50\n        port_value: 80\n
+    \ - name: dmpaudienceuploader-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.72.28\n        port_value: 80\n  - name: roleservice-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.21.1\n        port_value:
+    80\n  - name: mygolangproject-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: mygolangproject-preview\n        port_value: 80\n  - name: admanage-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.20.92\n        port_value:
+    80\n  - name: sspv2-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: logical_dns\n    lb_policy: round_robin\n    dns_lookup_family:
+    V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: sspv2-preview\n        port_value: 80\n  - name: costratio-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.178.153\n        port_value:
+    80\n  - name: costservice-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.196.69\n        port_value: 80\n  - name: unitagperms-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: unitagperms-preview\n
+    \       port_value: 80\n  - name: dspuser-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.136.44\n        port_value: 80\n  - name: resourcemgr-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.7.119\n        port_value:
+    80\n  - name: agentcensor-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.76.198\n        port_value: 80\n  - name: unitagserver-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: unitagserver-preview\n
+    \       port_value: 80\n  - name: pricinggrpc-egress\n    connect_timeout: 30s\n
+    \   http2_protocol_options: {}\n    type: logical_dns\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: pricinggrpc-preview\n        port_value:
+    80\n  - name: banker-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.38.77\n        port_value: 80\n  - name: openstat-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: static\n    lb_policy:
+    round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds:
+    60\n    hosts:\n    - socket_address:\n        address: 10.247.44.161\n        port_value:
+    80\n  - name: pretargeting-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.86.211\n        port_value: 80\n  - name: router-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: router-preview\n
+    \       port_value: 80\n  - name: fundmanage-egress\n    connect_timeout: 30s\n
+    \   http2_protocol_options: {}\n    type: static\n    lb_policy: round_robin\n
+    \   dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n      seconds: 60\n    hosts:\n
+    \   - socket_address:\n        address: 10.247.91.76\n        port_value: 80\n
+    \ - name: customerserver-egress\n    connect_timeout: 30s\n    http2_protocol_options:
+    {}\n    type: static\n    lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n
+    \   dns_refresh_rate:\n      seconds: 60\n    hosts:\n    - socket_address:\n
+    \       address: 10.247.221.117\n        port_value: 80\n  - name: osadpool-egress\n
+    \   connect_timeout: 30s\n    http2_protocol_options: {}\n    type: logical_dns\n
+    \   lb_policy: round_robin\n    dns_lookup_family: V4_ONLY\n    dns_refresh_rate:\n
+    \     seconds: 60\n    hosts:\n    - socket_address:\n        address: osadpool-preview\n
+    \       port_value: 80\n  #- name: zipkin\n  #  connect_timeout: 1s\n  #  type:
+    LOGICAL_DNS\n  #  lb_policy: round_robin\n  #  hosts:\n  #  - socket_address:\n
+    \ #      address: zipkin-preview.os-preview\n  #      port_value: 9411\n  - name:
+    local_service_grpc\n    connect_timeout: 360s\n    type: static\n    lb_policy:
+    round_robin\n    http2_protocol_options: {}\n    hosts:\n    - socket_address:\n
+    \       address: 127.0.0.1\n        port_value: 50051\ncluster_manager:\n  outlier_detection:
+    \n    event_log_path: \"/dev/stdout\"\nstats_sinks:\n  name: envoy.statsd\n  config:\n
+    \   prefix: \"envoy.os-preview\"\n    address: \n      socket_address: \n        address:
+    100.64.29.100   # https://github.com/envoyproxy/envoy/issues/1028 尚未支持域名解析 graphite-develop.dsp-develop\n
+    \       port_value: 8125\n        protocol: UDP\nstats_flush_interval:\n  seconds:
+    5\nadmin:\n  access_log_path: \"/dev/null\"\n  address:\n    socket_address:\n
+    \     address: 0.0.0.0\n      # prometheus数据在 :8001/stats/prometheus\n      port_value:
+    8001"
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2019-07-10T05:48:49Z
+  name: admanage-preview-envoy-config
+  namespace: os-preview
+  resourceVersion: "10373798"
+  selfLink: /api/v1/namespaces/os-preview/configmaps/admanage-preview-envoy-config
+  uid: 6414cc7d-a2d6-11e9-84d7-fa163eb0d45d

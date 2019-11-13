@@ -26,7 +26,7 @@ func (lock *Lock) tryLock() (ok bool, err error) {
 	}
 	return true, nil
 }
- 
+
 func (lock *Lock) Unlock() (err error) {
 	_, err = lock.conn.Do("del", lock.key())
 	return
