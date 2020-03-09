@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+数据流中的中位数
+ */
+
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	n1, n2 := len(nums1), len(nums2)
 	res := make([]int, n1+n2)
