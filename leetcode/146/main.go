@@ -7,13 +7,13 @@ import (
 
 /**
 lru缓存实现：哈希表和双向链表,因为要在O（1）时间复杂度删除链表任意一个元素,这道题不用,但如果要手动删除某个缓存或者有过期时间就需要
- */
+*/
 
 // 双向链表
 type DoubleLinked struct {
 	key, value int
 	// 过期时间 时间戳,至于啥时候去扫描过期元素,有待商榷
-	Expire int64
+	//Expire int64
 	prev, next *DoubleLinked
 }
 
@@ -24,6 +24,8 @@ type LRUCache struct {
 	head, tail *DoubleLinked
 	// 需要线程安全的话 阔以加互斥锁
 	mu sync.Mutex
+	// 过期时间 key:时间戳,至于啥时候去扫描过期元素,阔以参考redis过期策略
+	Expire map[int]int64
 }
 
 func Constructor(capacity int) LRUCache {

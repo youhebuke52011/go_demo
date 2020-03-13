@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"go_demo/common"
 )
 
 /**
@@ -68,8 +67,8 @@ func merge(left, right []int) []int {
 }
 
 func main() {
-	a := common.GenerateSlice(10000000)
-	//a := []int{3, 8, 7, 2}
+	//a := common.GenerateSlice(10000000)
+	a := []int{3, 8, 7, 2}
 	//a := []int{9, 8, 7, 6}
 	count = 0
 	//printSlice(a, "before:")
