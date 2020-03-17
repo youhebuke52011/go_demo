@@ -14,7 +14,7 @@ func characterArrangement(s []byte, l, r, n int, res *[]string) {
 	}
 	if l == r {
 		*res = append(*res, string(s))
-		fmt.Printf("%s\n", s)
+		//fmt.Printf("%s\n", s)
 		return
 	}
 	for i := l; i <= r; i++ {

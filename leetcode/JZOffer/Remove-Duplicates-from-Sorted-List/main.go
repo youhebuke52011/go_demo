@@ -8,7 +8,7 @@ type ListNode struct {
 }
 
 /**
-删除链表中重复的元素
+删除有序链表中重复的元素
 */
 
 func RemoveDuplicatesFromSortedList(head *ListNode) {

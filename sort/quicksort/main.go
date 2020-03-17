@@ -80,7 +80,7 @@ func main() {
 	//a := common.GenerateSlice(10000000)
 	a := []int{8,8,3,3,2,1,2,3,6,1,1}
 	common.PrintSlice(a, "before:")
-	//QuickSort(a)
-	QuickSort3Way(a)
+	QuickSort(a)
+	//QuickSort3Way(a)
 	common.PrintSlice(a, "after:")
 }

@@ -34,4 +34,5 @@ func maxArea(height []int) int {
 func main() {
 	fmt.Println(maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7}))
 	fmt.Println(maxArea([]int{1, 2, 1}))
+	fmt.Println(maxArea([]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}))
 }
