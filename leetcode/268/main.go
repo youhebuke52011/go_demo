@@ -2,6 +2,9 @@ package main
 
 import "fmt"
 
+/**
+0...n 缺失的那个
+ */
 func missingNumber(nums []int) int {
 	xor := 0
 	// 0,0,1,1,2,3 --> 2,3

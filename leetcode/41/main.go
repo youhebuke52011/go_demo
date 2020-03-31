@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+//给你一个未排序的整数数组，请你找出其中没有出现的最小的正整数。
+*/
+
 func firstMissingPositive(nums []int) int {
 	// 整理 nums ，让 nums[k] == k+1，只要 k+1 存在于 nums 中
 	for i := 0; i < len(nums); i++ {

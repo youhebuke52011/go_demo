@@ -7,6 +7,7 @@ import (
 )
 
 /**
+数组凑成的最大数
 思路：按照 if ab > ba -> a > b, if ab < ba -> a < b, if ab = ba -> a = b 来排序
  */
 

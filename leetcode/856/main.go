@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+特定规则的括号对数量
+ */
+
 func slove(l, r int, sb []byte) int {
 	tmp := 0
 	res := 0

@@ -1,9 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
+
+/**
+比较版本号
+如果 version1 > version2 返回 1，如果 version1 < version2 返回 -1， 除此之外返回 0。
+*/
 
 func compareVersion(version1 string, version2 string) int {
 	sb1 := strings.Split(version1, ".")
@@ -52,9 +58,9 @@ func compareVersion(version1 string, version2 string) int {
 }
 
 func main() {
-	//fmt.Println(compareVersion("1.0.1", "1.0.1"))
-	//fmt.Println(compareVersion("7.5.2.4", "7.5.3"))
-	//fmt.Println(compareVersion("01", "1"))
-	//fmt.Println(compareVersion("1", "1.1"))
-	//fmt.Println(compareVersion("1.0", "1"))
+	fmt.Println(compareVersion("1.0.1", "1.0.1"))
+	fmt.Println(compareVersion("7.5.2.4", "7.5.3"))
+	fmt.Println(compareVersion("01", "1"))
+	fmt.Println(compareVersion("1", "1.1"))
+	fmt.Println(compareVersion("1.0", "1"))
 }

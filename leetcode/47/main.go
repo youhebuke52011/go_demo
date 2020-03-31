@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+给定一个可包含重复数字的序列，返回所有不重复的全排列
+ */
+
 func solve(nums, tmp []int, n, index int, res *[][]int, visit []bool) {
 	if index == n {
 		t := make([]int, n)

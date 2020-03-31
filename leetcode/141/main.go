@@ -9,6 +9,10 @@ type ListNode struct {
 	Next *ListNode
 }
 
+/**
+判断链表是否有环
+ */
+
 func hasCycle(head *ListNode) bool {
 	fast, slow := head, head
 	for fast != nil && fast.Next != nil {

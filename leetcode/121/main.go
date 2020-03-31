@@ -2,6 +2,11 @@ package main
 
 import "fmt"
 
+/**
+一次买入卖出，最大收益
+从后往前找
+ */
+
 func maxProfit(prices []int) int {
 	maxPrice, res := 0, 0
 	for i := len(prices)-1; i >= 0; i-- {

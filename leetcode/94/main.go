@@ -8,6 +8,10 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+/**
+先序遍历
+ */
+
 func inorderTraversal(root *TreeNode) []int {
 	if root == nil {
 		return nil

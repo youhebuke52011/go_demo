@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+判断第一个字符串ransom能不能由第二个字符串magazines里面的字符构成
+ */
+
 func canConstruct(ransomNote string, magazine string) bool {
 	n1 := len(ransomNote)
 	n2 := len(magazine)

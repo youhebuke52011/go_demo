@@ -6,6 +6,10 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+/**
+判断两棵树是否相同
+ */
+
 func isSameTree(p *TreeNode, q *TreeNode) bool {
 	if p == nil && q == nil {
 		return true

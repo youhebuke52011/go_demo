@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+/**
+字符串中的单词数
+ */
+
 func countSegments(s string) int {
 	if len(s) == 0 {
 		return 0

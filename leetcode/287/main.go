@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 /**
+查找重复数
 快指针
 a -> b -> c  ->  d
           |      |

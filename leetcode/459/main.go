@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+判断它是否可以由它的一个子串重复多次构成
+ */
+
 func repeatedSubstringPattern(s string) bool {
 	n := len(s)
 	if n == 0 || n == 1 {
@@ -33,4 +37,5 @@ func main() {
 	fmt.Println(repeatedSubstringPattern("abac"))
 	fmt.Println(repeatedSubstringPattern("ababba"))
 	fmt.Println(repeatedSubstringPattern("ababab"))
+	fmt.Println(repeatedSubstringPattern("abcd"))
 }

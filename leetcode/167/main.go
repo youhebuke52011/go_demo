@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+两数之和
+ */
+
 func twoSum(numbers []int, target int) []int {
 	n := len(numbers)
 	l, r := 0, n-1

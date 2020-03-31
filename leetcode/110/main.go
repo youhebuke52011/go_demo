@@ -6,6 +6,10 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+/**
+是否平衡二叉树
+ */
+
 func max(a, b int) int {
 	if a > b {
 		return a

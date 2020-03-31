@@ -2,6 +2,11 @@ package main
 
 import "fmt"
 
+/**
+多次买入卖出，最大收益
+每一个上坡加起来
+ */
+
 func maxProfit(prices []int) int {
 	length := len(prices)
 	if length < 2 {

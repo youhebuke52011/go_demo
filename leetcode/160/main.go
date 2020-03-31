@@ -6,6 +6,7 @@ type ListNode struct {
 }
 
 /**
+相交链表
 思路：
 a1 a2 a3 a4 a5 b1 b2 b3 b4 b5 b6
 b1 b2 b3 b4 b5 b6 a1 a2 a3 a4 a5

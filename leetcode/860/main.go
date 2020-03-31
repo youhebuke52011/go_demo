@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+能不能找零钱
+ */
+
 func lemonadeChange(bills []int) bool {
 	fives, tens := 0, 0
 	for _, row := range bills {

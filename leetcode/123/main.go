@@ -2,12 +2,19 @@ package main
 
 import "fmt"
 
+/**
+最多两次买入卖出，最大收益
+max = max(prices[:i]) + max(prices[i:])
+总体最大收益=左边最大收益+右边最大收益
+ */
+
 func maxProfit(prices []int) int {
 	size := len(prices)
 	if size <= 1 {
 		return 0
 	}
 
+	// 某个点的收益，有正数有负数
 	profits := []int{}
 	temp := 0
 	for i := 1; i < size; i++ {
@@ -44,6 +51,7 @@ func max(ps []int) int {
 	max, tmp := 0, 0
 
 	for _, p := range ps {
+		// 收益减到负数，就把收益的都清0
 		if tmp < 0 {
 			tmp = 0
 		}

@@ -7,6 +7,10 @@ type ListNode struct {
 	Next *ListNode
 }
 
+/**
+反转链表，头插法
+ */
+
 func reverseList(head *ListNode) *ListNode {
 	var curHead *ListNode
 	for head != nil {

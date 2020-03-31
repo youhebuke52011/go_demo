@@ -47,6 +47,7 @@ func merge(left, right []int) []int {
 		} else {
 			result[k] = right[j]
 			j++
+			// 这个right[j]有多少个大过它的
 			count += len(left) - 1 - i + 1
 		}
 		k++

@@ -2,6 +2,12 @@ package main
 
 import "fmt"
 
+/**
+压缩字符串
+["a","a","b","b","c","c","c"] -> ["a","2","b","2","c","3"]
+输出压缩数组的长度
+ */
+
 func compress(chars []byte) int {
 	n := len(chars)
 	if n == 0 || n == 1 {

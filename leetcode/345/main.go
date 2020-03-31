@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+// 反转该字符串中的元音字母
+
 func reverseVowels(s string) string {
 	sb := []byte(s)
 	n := len(s)

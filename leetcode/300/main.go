@@ -14,6 +14,10 @@ func max(a, b int) int {
 	return b
 }
 
+/**
+最长上升子序列
+ */
+
 // O(n^2)算法
 //func lengthOfLIS(nums []int) int {
 //	length := len(nums)

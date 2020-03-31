@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+
 func TwoSum(nums []int, target int) []int {
 	tmpMap := make(map[int]int, len(nums))
 	for i, row := range nums {

@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+字符串相加
+ */
+
 func addStrings(num1 string, num2 string) string {
 	n := len(num1)
 	if n < len(num2) {

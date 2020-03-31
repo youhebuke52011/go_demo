@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+字符串第一个唯一的字符
+ */
+
 func firstUniqChar(s string) int {
 	sb := []byte(s)
 	hashMap := map[byte]int{}

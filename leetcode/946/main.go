@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+/**
+出栈序列是否合法
+ */
+
 func validateStackSequences(pushed []int, popped []int) bool {
 	stack := make([]int, len(pushed))
 	index := -1

@@ -5,8 +5,13 @@ import (
 	"fmt"
 )
 
+/**
+数组中第K大的数
 // 最大堆
+ */
 
+
+// nlogn
 func findKthLargest(nums []int, k int) int {
 	tmp := highHeap(nums)
 	h := &tmp
