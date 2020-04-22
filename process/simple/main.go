@@ -11,7 +11,7 @@ func main() {
 	//fmt.Println("r2:", r2)
 
 	num := 100000000
-	//c := make(chan bool)
+	c := make(chan bool)
 	//mutex := sync.Mutex{}
 	//mutex := sync.RWMutex{}
 	wg := sync.WaitGroup{}
@@ -23,12 +23,12 @@ func main() {
 			num++
 		}
 		//mutex.Unlock()
-		//c<-true
+		c<-true
 		wg.Done()
 	}()
 
 	go func() {
-		//<-c
+		<-c
 		//mutex.Lock()
 		for j := 100000000; j > 0; j-- {
 			num--
