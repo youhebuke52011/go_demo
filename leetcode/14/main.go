@@ -29,9 +29,9 @@ func longestCommonPrefix(strs []string) string {
 }
 
 func main() {
-	//s := []string{"dog", "racecar", "car"}
-	//s := []string{"flower","flow","flight"}
-	//s := []string{""}
-	s := []string{}
+	// s := []string{"dog", "racecar", "car"}
+	s := []string{"flower","flow","flight"}
+	// s := []string{""}
+	// s := []string{}
 	fmt.Println(longestCommonPrefix(s))
 }

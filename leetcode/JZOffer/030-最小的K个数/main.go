@@ -32,14 +32,17 @@ func (m *MinHeap) Pop() interface{} {
 func minK(nums []int, k int) ([]int, error) {
 	tmp := MinHeap(nums)
 	h := &tmp
+	// fmt.Println(h)
 	heap.Init(h)
+	// fmt.Println(h)
 	res := make([]int, k)
-	for i:=0;i<k;i++ {
+	for i := 0; i < k; i++ {
 		t := h.Pop().(int)
 		res[i] = t
-		heap.Remove(h,0)
+		// heap.Remove(h, 0)
+		fmt.Println(h)
 	}
-	return res,nil
+	return res, nil
 }
 
 func main() {

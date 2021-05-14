@@ -14,7 +14,7 @@ func maxDepth(root *TreeNode) int {
 	max := 0
 	var dfs func(root *TreeNode, depth int)
 	dfs = func(root *TreeNode, depth int) {
-		if root == nil{
+		if root == nil {
 			return
 		}
 		if max < depth {

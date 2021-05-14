@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 /**
 
@@ -10,15 +12,18 @@ import "fmt"
 
 func characterArrangement(s []byte, l, r, n int, res *[]string) {
 
-	if l >= n {
-		return
-	}
+	// if l >= n {
+	// 	return
+	// }
 	if l == r {
 		*res = append(*res, string(s))
 		//fmt.Printf("%s\n", s)
 		return
 	}
 	for i := l; i <= r; i++ {
+		// if !canSwap(s, l, i) {
+		// 	continue
+		// }
 		s[i], s[l] = s[l], s[i]
 		//fmt.Printf("before: %s,%d,%d\n", s, i+1, l+1)
 		characterArrangement(s, l+1, r, n, res)
@@ -28,9 +33,19 @@ func characterArrangement(s []byte, l, r, n int, res *[]string) {
 	return
 }
 
+func canSwap(sb []byte, l, r int) bool {
+	for i := l; i < r; i++ {
+		if sb[i] == sb[r] {
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
 	res := make([]string, 0)
 	s := "abc"
+	// s := "abb"
 	characterArrangement([]byte(s), 0, len(s)-1, len(s), &res)
 	fmt.Println(res)
 	//for _, row := range res {

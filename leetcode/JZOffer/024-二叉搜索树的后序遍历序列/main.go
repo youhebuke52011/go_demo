@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TreeNode struct {
 	Val   int
@@ -8,7 +10,9 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-var ch chan int
+// var ch chan int
+
+var ch = make(chan int)
 
 //func print() []int {
 //	res := []int{}
@@ -21,7 +25,8 @@ func postorderTraversal(root *TreeNode) {
 		return
 	}
 	postorderTraversal(root.Left)
-	ch<-root.Val
+	ch <- root.Val
+	// fmt.Println(root.Val)
 	postorderTraversal(root.Right)
 }
 
@@ -41,8 +46,14 @@ func main() {
 	}
 	res := []int{}
 	go func() {
-		res = append(res,<-ch)
+		for {
+			select {
+			case t := <-ch:
+				res = append(res, t)
+			}
+		}
 	}()
 	postorderTraversal(&root)
+	close(ch)
 	fmt.Println(res)
 }

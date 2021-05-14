@@ -21,7 +21,7 @@ func reverse(head *ListNode) *ListNode {
 		cur = head
 		head = tmp
 	}
-	return head
+	return cur
 }
 
 func main() {

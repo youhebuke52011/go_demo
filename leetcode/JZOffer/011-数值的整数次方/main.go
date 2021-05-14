@@ -30,6 +30,7 @@ func PowNormal(base float64, exp int) float64 {
 	res, tmp := 1.0, base
 	for exp != 0 {
 		// 奇数
+		fmt.Println(exp, tmp, exp&1, exp>>1)
 		if exp&1 == 1 {
 			res *= tmp
 		}

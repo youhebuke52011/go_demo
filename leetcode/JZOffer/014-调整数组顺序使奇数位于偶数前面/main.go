@@ -23,6 +23,7 @@ import "fmt"
 func oddFirst(nums []int) {
 	for i, j := 0, 0; i < len(nums); i++ {
 		// 从左到右找到第一个偶数
+		fmt.Println(i, j, nums)
 		for i < len(nums) {
 			if nums[i]%2 == 0 {
 				break
@@ -37,12 +38,12 @@ func oddFirst(nums []int) {
 			}
 		}
 
-		if j==len(nums) {
+		if j == len(nums) {
 			break
 		}
 		tmp := nums[j]
 		// 偶数位之后往后移
-		for k:=j-1;k>=i;k-- {
+		for k := j - 1; k >= i; k-- {
 			nums[k+1] = nums[k]
 		}
 		nums[i] = tmp

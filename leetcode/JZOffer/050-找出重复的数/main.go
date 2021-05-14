@@ -28,7 +28,7 @@ class Solution:
                     return True
                 numbers[numbers[i]], numbers[i] = numbers[i], numbers[numbers[i]]
         return False
- */
+*/
 
 func RepeatingNumbersInSpots(nums []int) int {
 	for _, row := range nums {
@@ -37,19 +37,22 @@ func RepeatingNumbersInSpots(nums []int) int {
 		}
 	}
 
-	for i, row := range nums {
-		for i != row {
-			if row == nums[row] {
-				nums[0] = row
-				return row
+	for i := 0; i < len(nums); i++ {
+		for i != nums[i] {
+			fmt.Printf("%d %d %d", i, nums[i], nums[nums[i]])
+			if nums[i] == nums[nums[i]] {
+				// nums[0] = row
+				return nums[i]
 			}
-			nums[row], nums[i] = nums[i], nums[row]
+			nums[nums[i]], nums[i] = nums[i], nums[nums[i]]
+			fmt.Println(nums)
+
 		}
 	}
 	return -1
 }
 
 func main() {
-	//fmt.Println(RepeatingNumbersInSpots([]int{2, 3, 1, 0, 2, 5, 3}))
-	fmt.Println(RepeatingNumbersInSpots([]int{2, 3, 1, 0, 1, 5, 3}))
+	fmt.Println(RepeatingNumbersInSpots([]int{2, 3, 1, 0, 2, 5, 3}))
+	// fmt.Println(RepeatingNumbersInSpots([]int{2, 3, 1, 0, 1, 5, 3}))
 }

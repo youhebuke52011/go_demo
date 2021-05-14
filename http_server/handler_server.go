@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"runtime"
 	"time"
 )
 
@@ -18,11 +20,16 @@ type RequestPayload struct {
 }
 
 func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Println("begin>>> ", runtime.NumGoroutine())
+	time.Sleep(time.Second * 10)
 	log.Fatalln("My Handler ServeHTTP!!!")
-	if err := Redirect(w, r); err != nil {
-		log.Fatalf("ServeHTTP Redirect Error:%v", err)
-		panic(err)
-	}
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Println("end>>> ", runtime.NumGoroutine())
+	// if err := Redirect(w, r); err != nil {
+	// 	log.Fatalf("ServeHTTP Redirect Error:%v", err)
+	// 	// panic(err)
+	// }
 }
 
 //Redirect 反向代理 流量转发
@@ -34,6 +41,7 @@ func Redirect(w http.ResponseWriter, r *http.Request) error {
 	}
 	// 根据proxy_condition获取endpoint
 	targetUrl := getProxyUrl(requestPayload.ProxyCondition)
+
 	// 流量转发
 	serveReverseProxy(targetUrl, w, r)
 	return nil
@@ -95,7 +103,7 @@ func serveReverseProxy(target string, w http.ResponseWriter, r *http.Request) {
 	proxy.ServeHTTP(w, r)
 }
 
-func MyHandlerServer() {
+func main() {
 	server := http.Server{
 		Addr:              ":6767",
 		Handler:           &MyHandler{},
@@ -108,3 +116,17 @@ func MyHandlerServer() {
 		panic(err)
 	}
 }
+
+// func MyHandlerServer() {
+// 	server := http.Server{
+// 		Addr:              ":6767",
+// 		Handler:           &MyHandler{},
+// 		ReadTimeout:       10 * time.Second,
+// 		ReadHeaderTimeout: 10 * time.Second,
+// 		WriteTimeout:      10 * time.Second,
+// 	}
+
+// 	if err := server.ListenAndServe(); err != nil {
+// 		panic(err)
+// 	}
+// }
