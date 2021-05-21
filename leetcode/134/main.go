@@ -16,12 +16,14 @@ func canCompleteCircuit(gas []int, cost []int) int {
 	for i, g := range gas {
 		a += g - cost[i]
 		// 不够钱到下一站
+		fmt.Println(a,b, start)
 		if a < 0 {
 			b += a
 			start = i + 1
 			a = 0
 		}
 	}
+	fmt.Println(a,b, start)
 
 	if a+b < 0 {
 		return -1
