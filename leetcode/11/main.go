@@ -35,4 +35,13 @@ func main() {
 	fmt.Println(maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7}))
 	fmt.Println(maxArea([]int{1, 2, 1}))
 	fmt.Println(maxArea([]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}))
+
+	// for k, v := range HPTranMap {
+	// 	kb := []byte(k)
+	// 	vb := []byte(v)
+	// 	if kb[0] == ' ' || kb[len(kb)-1] == ' ' || vb[0] == ' ' || vb[len(vb)-1] == ' ' {
+	// 		fmt.Println(k, v)
+	// 	}
+	// }
+
 }

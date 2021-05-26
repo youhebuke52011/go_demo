@@ -22,10 +22,10 @@ func removeDuplicates(nums []int) int {
 }
 
 func main() {
-	//nums := []int{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}
+	nums := []int{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}
 	//nums := []int{}
 	//nums := []int{1, 1}
-	nums := []int{1, 1, 1, 1}
+	// nums := []int{1, 1, 1, 1}
 	end := removeDuplicates(nums)
 	fmt.Println(nums[:end])
 }

@@ -4,7 +4,6 @@ import (
 	"container/list"
 	"fmt"
 )
-
 // func isValid(s string) bool {
 // 	var stack []byte
 // 	n := len(s)

@@ -17,6 +17,7 @@ func longestValidParentheses(s string) int {
 				front := stack.Back().Value.(int)
 				if res < i-front {
 					res = i - front
+					fmt.Println(i, front, res)
 				}
 				continue
 			}

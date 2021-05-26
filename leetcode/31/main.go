@@ -36,6 +36,8 @@ func nextPermutation(nums []int) {
 
 	// 二分查找 在翻转序列中找刚好大过i-1的值，并swap
 	l, r := i, length-1
+	fmt.Println(nums[:i+1])
+	fmt.Println(nums[i+1:])
 	target := nums[i]
 	for l+1 < r {
 		//mid := l + (r-l)/2
@@ -51,10 +53,10 @@ func nextPermutation(nums []int) {
 }
 
 func main() {
-	nextPermutation([]int{1, 2, 3})
-	nextPermutation([]int{3, 2, 1})
-	nextPermutation([]int{1, 1, 5})
-	nextPermutation([]int{1, 5, 1})
-	nextPermutation([]int{1, 3, 2})
+	// nextPermutation([]int{1, 2, 3})
+	// nextPermutation([]int{3, 2, 1})
+	// nextPermutation([]int{1, 1, 5})
+	// nextPermutation([]int{1, 5, 1})
+	// nextPermutation([]int{1, 3, 2})
 	nextPermutation([]int{2, 2, 7, 5, 4, 3, 2, 2, 1})
 }

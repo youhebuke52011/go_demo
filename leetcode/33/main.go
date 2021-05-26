@@ -41,6 +41,7 @@ import "fmt"
 
 func search(nums []int, target int) int {
 	rotated := indexOfMin(nums) /* 数组旋转了的距离 */
+	fmt.Println(rotated)
 	size := len(nums)
 	left, right := 0, size-1
 
@@ -78,7 +79,7 @@ func indexOfMin(nums []int) int {
 
 func main() {
 	fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 3))
-	fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 5))
-	fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 2))
-	fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 0))
+	// fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 5))
+	// fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 2))
+	// fmt.Println(search([]int{4, 5, 6, 7, 0, 1, 2}, 0))
 }
