@@ -24,8 +24,8 @@ func lengthOfLastWord(s string) int {
 }
 
 func main() {
-	//res := lengthOfLastWord("Hello World")
-	//res := lengthOfLastWord("a ")
-	res := lengthOfLastWord(" ")
+	// res := lengthOfLastWord("Hello World")
+	res := lengthOfLastWord("a ")
+	// res := lengthOfLastWord(" ")
 	fmt.Println(res)
 }

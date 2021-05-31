@@ -68,7 +68,6 @@ import (
 // }
 
 func slove(andidates []int, target, index int, tmp []int, res *[][]int) {
-	// index == len(andidates)-1 &&
 	if target == 0 {
 		t := make([]int, len(tmp))
 		copy(t, tmp)
@@ -77,7 +76,6 @@ func slove(andidates []int, target, index int, tmp []int, res *[][]int) {
 		// *res = append(*res, tmp)
 		return
 	}
-	// || index > len(andidates)-1
 	if target < 0 {
 		return
 	}

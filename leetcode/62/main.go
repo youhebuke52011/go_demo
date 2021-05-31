@@ -26,8 +26,8 @@ func uniquePaths(m int, n int) int {
 	// for i := 1; i <= m-1; i++ {
 	// 	for j := 1; j <= n-1; j++ {
 	// 		fmt.Printf("%d ", dp[i][j])
-	// 	}
 	// 	fmt.Println()
+	// 	}
 	// }
 	return dp[m-1][n-1]
 }

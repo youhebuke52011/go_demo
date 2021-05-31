@@ -11,7 +11,7 @@ func solve(nums, tmp []int, n, index int, res *[][]int, visit []bool) {
 		t := make([]int, n)
 		copy(t, tmp)
 		*res = append(*res, t)
-		//*res = append(*res, tmp)
+		// *res = append(*res, tmp)
 		return
 	}
 	used := make(map[int]bool, n-index)
